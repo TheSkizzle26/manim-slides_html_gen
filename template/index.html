@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Präsentation</title>
+    <style>
+html, body {
+    overflow: hidden; /* disable scrolling */
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+#playing1 {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    width: 100%;
+}
+
+#playing2 {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    width: 100%;
+}
+
+#controls {
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.controlButton {
+    opacity: 0;
+}
+
+#prev {
+    width: 20%;
+    height: 100%;
+}
+
+#next {
+    width: 80%;
+    height: 100%;
+}
+    </style>
+    <script>
+let currentSlide = 0
+let numSlides = 0
+let slideSources = [[__SOURCES__]];
+
+let activeVideo = 0
+let first = true
+
+
+function enterFullscreen() {
+    document.documentElement.requestFullscreen()
+}
+
+function updatePlaying() {
+    let front = activeVideo ? "playing2" : "playing1";
+    let back  = activeVideo ? "playing1" : "playing2";
+
+    const backEl = document.getElementById(back);
+    const nextSrc = slideSources[currentSlide + 1];
+
+    backEl.pause();
+    backEl.src = nextSrc;
+    backEl.play()
+
+    backEl.oncanplay = () => {
+        backEl.style.zIndex = "1";
+        document.getElementById(front).style.zIndex = "0";
+
+        activeVideo = 1 - activeVideo;
+        backEl.oncanplay = null;
+    };
+}
+
+function changeSlide(diff) {
+    let newSlide = currentSlide + diff
+
+    if (newSlide >= 0 && newSlide < numSlides) {
+        currentSlide = newSlide
+        updatePlaying()
+    }
+}
+
+function nextButtonClicked() {
+    enterFullscreen()
+    changeSlide(1)
+}
+
+function prevButtonClicked() {
+    enterFullscreen()
+    changeSlide(-1)
+}
+
+window.onload = () => {
+    numSlides = slideSources.length;
+    document.getElementById("playing1").src = slideSources[0];
+    document.getElementById("playing1").play();
+}
+    </script>
+</head>
+<body>
+    <video autoplay id="playing1"></video>
+    <video autoplay id="playing2"></video>
+    <div id="controls">
+        <button id="prev" class="controlButton" onclick="prevButtonClicked()"></button>
+        <button id="next" class="controlButton" onclick="nextButtonClicked()"></button>
+    </div>
+</body>
+</html>
