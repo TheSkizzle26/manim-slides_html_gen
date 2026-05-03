@@ -2,7 +2,6 @@
 Generates an HTML file that acts like
 a PowerPoint containing only videos from
 a manim-slides project.
-JSON-file must be called data.json.
 """
 
 import json
