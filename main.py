@@ -8,6 +8,7 @@ JSON-file must be called data.json.
 import json
 import base64
 import os
+import sys
 
 SOURCE_PATH = "source"
 OUT_PATH = "out"
@@ -15,6 +16,10 @@ OUT_PATH = "out"
 
 class Generator:
     def __init__(self, name: str):
+        if not os.path.exists("source"):
+            os.mkdir("source")
+            raise BaseException("Put your slides folder in the source directory!")
+
         self.name = name
         self.source_path = SOURCE_PATH + "/" + name
 
@@ -58,6 +63,6 @@ class Generator:
 
 
 if __name__ == "__main__":
-    gen = Generator("phone_test")
+    gen = Generator(sys.argv[1])
     gen.gen()
     gen.save()
